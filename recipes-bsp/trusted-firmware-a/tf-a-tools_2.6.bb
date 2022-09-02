@@ -15,12 +15,13 @@ COMPATIBLE_HOST:class-target = "null"
 
 S = "${WORKDIR}/git"
 
-EXTRA_OEMAKE += "V=1 HOSTCC='${BUILD_CC}' OPENSSL_DIR='${STAGING_EXECPREFIXDIR}'"
-EXTRA_OEMAKE += "certtool fiptool"
+HOSTCC:class-native = "${BUILD_CC}"
+HOSTCC:class-nativesdk = "${CC}"
+EXTRA_OEMAKE = "V=1 HOSTCC='${HOSTCC}' OPENSSL_DIR='${STAGING_EXECPREFIXDIR}' certtool fiptool"
 
 do_configure[noexec] = "1"
 
-do_compile:prepend () {
+do_compile:prepend:class-native () {
     # This is still needed to have the native fiptool executing properly by
     # setting the RPATH
     sed -e '/^LDLIBS/ s,$, \$\{BUILD_LDFLAGS},' \
